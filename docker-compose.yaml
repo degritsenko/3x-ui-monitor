@@ -55,18 +55,6 @@ services:
     depends_on:
       - prometheus
 
-  node-exporter:
-    image: prom/node-exporter:latest
-    container_name: 3x-ui-node-exporter
-    restart: unless-stopped
-    command:
-      - "--path.rootfs=/host"
-      #- "--collector.netdev.device-include=^enp3s0$"
-    pid: host
-    network_mode: host 
-    volumes:
-      - /:/host:ro,rslave
-
 volumes:
   prometheus-data:
   grafana-data:

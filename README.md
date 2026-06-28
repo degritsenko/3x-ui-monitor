@@ -28,7 +28,7 @@ docker compose up -d
 - Grafana: `http://<server-ip>:3000`
 - Prometheus: `http://127.0.0.1:9090`
 - 3x-ui exporter metrics: `http://127.0.0.1:9847/metrics`
-- node-exporter metrics: `http://127.0.0.1:9100/metrics`
+- node-exporter metrics: `http://<server-ip>:9100/metrics`
 
 ## Verify
 

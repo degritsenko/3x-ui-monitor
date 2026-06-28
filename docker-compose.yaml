@@ -61,7 +61,6 @@ services:
     restart: unless-stopped
     command:
       - "--path.rootfs=/host"
-      - "--web.listen-address=127.0.0.1:9100"
       #- "--collector.netdev.device-include=^enp3s0$"
     pid: host
     network_mode: host 

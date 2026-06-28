@@ -1,6 +1,6 @@
 # 3x-ui Monitoring
 
-This stack runs Prometheus, Grafana, node-exporter, and `zbndev/3x-ui-exporter` separately from the existing 3x-ui Docker Compose stack.
+This stack runs Prometheus, Grafana and `zbndev/3x-ui-exporter` separately from the existing 3x-ui Docker Compose stack.
 
 ## Setup
 
@@ -28,7 +28,6 @@ docker compose up -d
 - Grafana: `http://<server-ip>:3000`
 - Prometheus: `http://127.0.0.1:9090`
 - 3x-ui exporter metrics: `http://127.0.0.1:9847/metrics`
-- node-exporter metrics: `http://<server-ip>:9100/metrics`
 
 ## Verify
 
@@ -37,6 +36,5 @@ docker compose ps
 docker compose logs xui-exporter
 ```
 
-In Prometheus, open `Status -> Targets` and confirm that `3x-ui` and `node` are up.
 
 In Grafana, open the `3x-ui` folder and select the provisioned dashboard.

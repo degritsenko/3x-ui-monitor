@@ -1,0 +1,73 @@
+networks:
+  monitoring:
+    driver: bridge
+
+services:
+  xui-exporter:
+    image: gritsenko/3x-ui-exporter:latest
+    container_name: 3x-ui-exporter
+    restart: unless-stopped
+    environment:
+      BASE_URL: ${XUI_BASE_URL}
+      TOKEN: ${XUI_API_TOKEN}
+      SCRAPE_TIMEOUT: ${SCRAPE_TIMEOUT:-10}
+    ports:
+      - "127.0.0.1:9847:9847"
+    networks:
+      - monitoring     
+
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: 3x-ui-prometheus
+    restart: unless-stopped
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=30d"
+      - "--web.enable-lifecycle"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+    ports:
+      - "127.0.0.1:9090:9090"
+    networks:
+      - monitoring       
+    depends_on:
+      - xui-exporter
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: 3x-ui-grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+    ports:
+      - "3000:3000"
+    networks:
+      - monitoring  
+    depends_on:
+      - prometheus
+
+  node-exporter:
+    image: prom/node-exporter:latest
+    container_name: 3x-ui-node-exporter
+    restart: unless-stopped
+    command:
+      - "--path.rootfs=/host"
+      - "--web.listen-address=127.0.0.1:9100"
+      #- "--collector.netdev.device-include=^enp3s0$"
+    pid: host
+    network_mode: host 
+    volumes:
+      - /:/host:ro,rslave
+
+volumes:
+  prometheus-data:
+  grafana-data:
